@@ -1,1 +1,5 @@
 jinja2
+reportlab
+python-dotenv
+streamlit
+google-genai
