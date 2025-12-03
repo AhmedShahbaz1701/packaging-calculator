@@ -1,7 +1,7 @@
-# Open Packaging Weight Calculator 📦
+# Open Packaging Weight Calculator & AI Scanner 📦
 ### The Open Source CSRD & EPR Compliance Tool
 
-![License: MIT](https://img.shields.io/badge/License-MIT-green.svg) ![Python](https://img.shields.io/badge/Python-3.x-blue.svg) ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-06B6D4.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg) ![Python](https://img.shields.io/badge/Python-3.x-blue.svg) ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B.svg) ![Gemini AI](https://img.shields.io/badge/AI-Gemini%202.5-8E75B2.svg)
 
 ## The Why: Fixing the E-Commerce Data Nightmare
 
@@ -11,55 +11,68 @@ If you run a Shopify store or manage logistics, you know the panic. New EU regul
 
 **The result?** Merchants are either guessing (risking audits) or overpaying for "Enterprise Sustainability Platforms" just to access basic physics data.
 
-**The Solution:** This project is a free, open-source calculator that estimates packaging weights using industry-standard surface area and GSM (Grams per Square Meter) physics. It provides the "missing link" data—Weight (g), Material Code (e.g., PAP 20), and Recycled Content estimates—instantly and for free.
+**The Solution:** This project provides two open-source tools to solve this:
+1.  A **Static Calculator** for instant, physics-based estimates of standard packaging.
+2.  An **AI Invoice Scanner** that reads your supplier PDFs and extracts compliance data automatically.
 
 ---
 
 ## Features
 
-*   **⚡️ Instant Calculation:** Get accurate weight estimates based on dimensions (L x W x H) and material type (Single/Double Wall, Poly, Kraft).
-*   **📝 Compliance Ready:** Auto-generates the specific Material Codes (PAP 20, PAP 21, LDPE 4) required for EU reporting.
-*   **🌍 Standard Library:** Pre-loaded with common shipping sizes from **FedEx, USPS, and Amazon**.
-*   **🔍 Programmatic SEO:** Includes a Python build script to generate hundreds of specific landing pages (e.g., "FedEx Medium Box Weight") to help lost merchants find answers via Google.
-*   **💸 100% Free:** MIT Licensed. No gatekeeping. No SaaS subscriptions.
+### 🧮 Static Calculator (Web Tool)
+*   **Instant Math:** Estimates weight based on dimensions (L x W x H) and material density (GSM).
+*   **Compliance Ready:** Auto-generates Material Codes (PAP 20, PAP 21, LDPE 4).
+*   **Standard Library:** Pre-loaded with **FedEx, USPS, and Amazon** sizes.
+*   **Zero Latency:** Runs as a static HTML site (Cloudflare Pages/Netlify).
+
+### 🤖 AI Invoice Scanner (Streamlit App)
+*   **Powered by Gemini 2.5 Flash:** Upload a supplier PDF (e.g., Uline invoice).
+*   **Smart Extraction:** Ignores products (T-shirts) and only finds packaging (Boxes, Tape, Mailers).
+*   **Auto-Calculation:** Infers dimensions and quantities to calculate total plastic/paper liability.
+*   **CSV Export:** Download a "Tare.fyi" compatible CSV for instant reporting.
 
 ---
 
-## Quick Start (For Developers)
-
-This project generates a static site (HTML/JS) using Python and Jinja2. It is designed to be hosted on any static host like Netlify, Vercel, or Cloudflare Pages.
+## Quick Start
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/open-packaging-weight-calculator.git
-cd open-packaging-weight-calculator
+git clone https://github.com/yourusername/packaging-calculator.git
+cd packaging-calculator
 ```
 
 ### 2. Install Dependencies
-We only need `jinja2` for the templating engine.
 ```bash
-pip install jinja2
+pip install -r requirements.txt
 ```
 
-### 3. Build the Site
-We use a two-step build process:
+### 3. Configure API Keys
+You need a **Google Gemini API Key** to use the AI Scanner.
+*   Get it here: [Google AI Studio](https://aistudio.google.com/app/apikey)
 
-**Step A: Generate the specific landing pages**
-This reads the data in `generate.py` and creates individual HTML files in the `pages/` directory.
+**For Local Development:**
+Create a `.env` file in the root directory:
+```bash
+GEMINI_API_KEY="your_actual_api_key_here"
+```
+
+**For Streamlit Cloud:**
+Add your key to the Secrets management console as `GEMINI_API_KEY`.
+
+### 4. Run the Tools
+
+**Option A: Build the Static Site**
+Generates the HTML pages for the calculator.
 ```bash
 python generate.py
-```
-
-**Step B: Build the Search Directory (Index)**
-This scans the `pages/` directory and builds the main `index.html` with the JS search grid.
-```bash
 python build_index.py
+# Output is in the /public folder
 ```
 
-### 4. Deploy
-You can simply drag the `index.html` and `pages/` folder to your host, or run the helper script to create a clean `public/` folder:
+**Option B: Run the AI Scanner**
+Launches the interactive Streamlit app.
 ```bash
-python prepare_deploy.py
+streamlit run app.py
 ```
 
 ---
@@ -87,9 +100,9 @@ Do you use a specific carrier box (DHL, DPD, UPS) or a popular supplier size (Ul
 ## Roadmap 🗺️
 
 *   [ ] **Add DHL & DPD Standard Sizes:** Expand coverage for European merchants.
-*   [ ] **Biodegradability Estimator:** Add logic to estimate decomposition times based on material type.
-*   [ ] **Bulk Export:** Allow users to download the entire database as a CSV.
-*   [ ] **API:** (Long term) A simple JSON endpoint for other tools to consume.
+*   [ ] **Shopify App Integration:** Pull order history directly to calculate total liability.
+*   [ ] **Biodegradability Estimator:** Add logic to estimate decomposition times.
+*   [ ] **Multi-Language Support:** French and German translations for local compliance officers.
 
 ---
 
