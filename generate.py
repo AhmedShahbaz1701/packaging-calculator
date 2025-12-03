@@ -117,8 +117,10 @@ print("Done generating pages.")
 def generate_sitemap():
     print("Generating sitemap.xml...")
     base_url = "https://tare.fyi"
-    sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
-    sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    sitemap_content = """
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+"""
 
     # Add Home Page
     sitemap_content += f'  <url><loc>{base_url}/</loc></url>\n'
@@ -137,5 +139,18 @@ def generate_sitemap():
         f.write(sitemap_content)
     print("sitemap.xml generated.")
 
-if __name__ == "__main__":
-    generate_sitemap()
+# 4. Generate robots.txt
+def generate_robots_txt():
+    print("Generating robots.txt...")
+    robots_content = """
+User-agent: *
+Allow: /
+Sitemap: https://tare.fyi/sitemap.xml
+"""
+    with open("robots.txt", "w", encoding="utf-8") as f:
+        f.write(robots_content)
+    print("robots.txt generated.")
+
+# Call sitemap and robots.txt generation after pages are done
+generate_sitemap()
+generate_robots_txt()
