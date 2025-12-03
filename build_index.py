@@ -75,7 +75,11 @@ def build_index():
     <!-- Hero Section -->
     <header class="bg-slate-850 text-white border-b border-slate-700 relative">
         <!-- Top Nav -->
-        <div class="absolute top-0 right-0 p-4">
+        <div class="absolute top-0 right-0 p-4 flex space-x-3">
+             <a href="https://packaging-calculator-hg7skzndcmhgjxyxjvx3hu.streamlit.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 transition-colors rounded-md shadow-sm">
+                ✨ AI Invoice Scanner
+                <span class="ml-2 inline-flex items-center rounded-full bg-yellow-400 px-2 py-0.5 text-xs font-medium text-yellow-900">New</span>
+            </a>
              <a href="https://forms.gle/9tN5joJShbtxsqLQ7" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1.5 border border-slate-600 text-sm font-medium rounded-md text-slate-200 bg-slate-800 hover:bg-slate-700 transition-colors shadow-sm hover:text-white">
                 ➕ Add Missing Box
             </a>
