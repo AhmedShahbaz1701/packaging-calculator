@@ -1,6 +1,8 @@
 import streamlit as st
 import tempfile
 import os
+import csv
+import datetime
 from dotenv import load_dotenv
 from scan_invoice import scan_invoice
 
@@ -38,7 +40,11 @@ if not api_key:
     st.info("If running on Streamlit Cloud: Go to App Settings > Secrets and add GEMINI_API_KEY.")
     st.stop()
 
-# --- 5. MAIN APP ---
+# --- 5. SESSION STATE INITIALIZATION ---
+if "unlocked" not in st.session_state:
+    st.session_state.unlocked = False
+
+# --- 6. MAIN APP ---
 uploaded_file = st.file_uploader("Upload Invoice (PDF)", type="pdf")
 
 if uploaded_file is not None:
@@ -46,18 +52,20 @@ if uploaded_file is not None:
         tmp_file.write(uploaded_file.getvalue())
         tmp_path = tmp_file.name
 
+    # We'll cache the extraction to avoid re-scanning on every rerun (like form submission)
+    @st.cache_data(show_spinner=False)
+    def cached_scan(path):
+        return scan_invoice(path, api_key=api_key)
+
     with st.status("Analyzing document with AI...", expanded=True) as status:
         st.write("📤 Uploading to secure sandbox...")
         st.write("🤖 Extracting packaging dimensions...")
         
-        # UPDATE: Pass the API key to the function
-        extracted_data = scan_invoice(tmp_path, api_key=api_key)
+        extracted_data = cached_scan(tmp_path)
         
         status.update(label="Extraction Complete!", state="complete", expanded=False)
 
-    os.remove(tmp_path)
-
-    # --- 6. RESULTS DISPLAY ---
+    # --- 7. SUMMARY RESULTS (Visible to All) ---
     if extracted_data:
         total_items = sum(item.get('qty', 0) for item in extracted_data)
         col1, col2 = st.columns(2)
@@ -65,19 +73,53 @@ if uploaded_file is not None:
         col2.metric("Total Units", total_items)
 
         st.divider()
-        
-        for item in extracted_data:
-            with st.container():
-                c1, c2, c3 = st.columns([2, 1, 1])
-                c1.subheader(item.get('name', 'Unknown Item'))
-                c1.caption(f"Material: {item.get('category', 'Unknown')}")
-                
-                c2.write(f"**Qty:** {item.get('qty', 0)}")
-                c3.write(f"**Dims:** {item.get('dims', 'N/A')}")
-                st.markdown("---")
-        
-        with st.expander("View Raw JSON (for API)"):
-            st.json(extracted_data)
+
+        # --- 8. LEAD GEN GATE ---
+        if not st.session_state.unlocked:
+            st.info("🔒 **Unlock Full Report**")
+            st.markdown("Enter your email to view the detailed line-item breakdown and download the JSON data.")
             
+            with st.form("lead_form"):
+                email_input = st.text_input("Email Address", placeholder="you@company.com")
+                submit_btn = st.form_submit_button("Unlock Report 🔓")
+                
+                if submit_btn:
+                    if email_input and "@" in email_input:
+                        # Save Lead
+                        try:
+                            with open("leads.csv", "a", newline="") as f:
+                                writer = csv.writer(f)
+                                writer.writerow([datetime.datetime.now().isoformat(), email_input])
+                        except Exception as e:
+                            st.error(f"Error saving lead: {e}")
+
+                        st.session_state.unlocked = True
+                        st.rerun() # Rerun to show unlocked content
+                    else:
+                        st.warning("Please enter a valid email address.")
+        
+        # --- 9. PREMIUM CONTENT (Unlocked) ---
+        if st.session_state.unlocked:
+            st.success("Report Unlocked! ✅")
+            
+            st.subheader("Detailed Breakdown")
+            for item in extracted_data:
+                with st.container():
+                    c1, c2, c3 = st.columns([2, 1, 1])
+                    c1.subheader(item.get('name', 'Unknown Item'))
+                    c1.caption(f"Material: {item.get('category', 'Unknown')}")
+                    
+                    c2.write(f"**Qty:** {item.get('qty', 0)}")
+                    c3.write(f"**Dims:** {item.get('dims', 'N/A')}")
+                    st.markdown("---")
+            
+            with st.expander("View Raw JSON (for API)"):
+                st.json(extracted_data)
+            
+            # Reset button to test again (Optional, helpful for dev)
+            if st.button("Start New Scan"):
+                st.session_state.unlocked = False
+                st.rerun()
+
     else:
         st.warning("No packaging items found in this document.")
