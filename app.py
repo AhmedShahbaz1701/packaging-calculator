@@ -37,7 +37,7 @@ if uploaded_file is not None:
         tmp_file.write(uploaded_file.getvalue())
         tmp_path = tmp_file.name
 
-    st.status("Analyzing document with AI...", expanded=True) as status:
+    with st.status("Analyzing document with AI...", expanded=True) as status:
         st.write("📤 Uploading to secure sandbox...")
         st.write("🤖 Extracting packaging dimensions...")
         
