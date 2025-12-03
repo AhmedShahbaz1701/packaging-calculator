@@ -112,3 +112,30 @@ for item in data_sources:
         print(f"Generated: {filename}")
 
 print("Done generating pages.")
+
+# 3. Generate Sitemap
+def generate_sitemap():
+    print("Generating sitemap.xml...")
+    base_url = "https://tare.fyi"
+    sitemap_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    sitemap_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+
+    # Add Home Page
+    sitemap_content += f'  <url><loc>{base_url}/</loc></url>\n'
+
+    # Scan pages directory
+    if os.path.exists(output_dir):
+        files = [f for f in os.listdir(output_dir) if f.endswith(".html")]
+        files.sort()
+        for filename in files:
+            url = f"{base_url}/pages/{filename}"
+            sitemap_content += f"  <url><loc>{url}</loc></url>\n"
+    
+    sitemap_content += '</urlset>'
+    
+    with open("sitemap.xml", "w", encoding="utf-8") as f:
+        f.write(sitemap_content)
+    print("sitemap.xml generated.")
+
+if __name__ == "__main__":
+    generate_sitemap()

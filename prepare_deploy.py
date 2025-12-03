@@ -5,6 +5,7 @@ def prepare_deploy():
     public_dir = 'public'
     pages_src = 'pages'
     index_src = 'index.html'
+    sitemap_src = 'sitemap.xml'
     
     # 1. Clean/Create 'public' directory
     if os.path.exists(public_dir):
@@ -28,8 +29,15 @@ def prepare_deploy():
         print(f"Copied '{pages_src}' folder to '{dest_pages}'.")
     else:
         print(f"Warning: '{pages_src}' folder not found!")
+
+    # 4. Copy sitemap.xml
+    if os.path.exists(sitemap_src):
+        shutil.copy2(sitemap_src, public_dir)
+        print(f"Copied '{sitemap_src}' to '{public_dir}/'.")
+    else:
+        print(f"Warning: '{sitemap_src}' not found! (Did you run generate.py?)")
         
-    # 4. Success Message
+    # 5. Success Message
     print("-" * 40)
     print("🚀 Ready to deploy! Drag the 'public' folder to Netlify/Cloudflare.")
     print("-" * 40)
