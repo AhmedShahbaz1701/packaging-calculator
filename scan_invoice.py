@@ -3,13 +3,17 @@ from dotenv import load_dotenv
 from google import genai
 import json
 
-# Load environment variables
+# Load environment variables (for local testing)
 load_dotenv()
 
-def scan_invoice(pdf_path):
+# UPDATE: Add api_key as an optional argument
+def scan_invoice(pdf_path, api_key=None):
     print(f"👀 Reading {pdf_path} with Gemini 2.5 Flash...")
     
-    api_key = os.getenv("GEMINI_API_KEY")
+    # Logic: Use the passed key, OR fallback to environment (for local CLI use)
+    if not api_key:
+        api_key = os.getenv("GEMINI_API_KEY")
+
     if not api_key:
         print("❌ Error: GEMINI_API_KEY not found.")
         return None
@@ -18,8 +22,7 @@ def scan_invoice(pdf_path):
     client = genai.Client(api_key=api_key)
 
     try:
-        # 2. Upload File (FIX: Use 'file=' instead of 'path=')
-        # The new SDK automatically handles the file reading when you pass the path string.
+        # 2. Upload File
         file_ref = client.files.upload(file=pdf_path)
         print(f"   ✅ Uploaded as: {file_ref.name}")
 

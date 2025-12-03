@@ -11,28 +11,37 @@ st.set_page_config(
     layout="centered"
 )
 
-# Force reload .env to catch key changes without restarting
-if "GEMINI_API_KEY" in os.environ:
-    del os.environ["GEMINI_API_KEY"]
-load_dotenv(override=True)
+# --- 2. HYBRID KEY LOADER (The Fix) ---
+# This function checks Streamlit Secrets first (Cloud), then .env (Local)
+def get_api_key():
+    # 1. Try Streamlit Secrets (Cloud)
+    if "GEMINI_API_KEY" in st.secrets:
+        return st.secrets["GEMINI_API_KEY"]
+    
+    # 2. Try Local .env
+    load_dotenv()
+    return os.getenv("GEMINI_API_KEY")
 
-# --- 2. UI HEADER ---
+api_key = get_api_key()
+
+# --- 3. UI HEADER ---
 st.title("📦 Invoice Scanner")
 st.markdown("""
 Upload a PDF invoice (Uline, Alibaba, etc.) to extract packaging line items automatically.
 **Powered by Gemini 2.5 Flash**
 """)
 
-# --- 3. API KEY CHECK ---
-if not os.getenv("GEMINI_API_KEY"):
-    st.error("❌ API Key not found. Please check your .env file.")
+# --- 4. API KEY CHECK ---
+if not api_key:
+    st.error("❌ API Key not found.")
+    st.info("If running locally: Check your .env file.")
+    st.info("If running on Streamlit Cloud: Go to App Settings > Secrets and add GEMINI_API_KEY.")
     st.stop()
 
-# --- 4. MAIN APP ---
+# --- 5. MAIN APP ---
 uploaded_file = st.file_uploader("Upload Invoice (PDF)", type="pdf")
 
 if uploaded_file is not None:
-    # Save to temp file because Gemini needs a path/file object
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
         tmp_file.write(uploaded_file.getvalue())
         tmp_path = tmp_file.name
@@ -41,17 +50,15 @@ if uploaded_file is not None:
         st.write("📤 Uploading to secure sandbox...")
         st.write("🤖 Extracting packaging dimensions...")
         
-        # Run the Scanner
-        extracted_data = scan_invoice(tmp_path)
+        # UPDATE: Pass the API key to the function
+        extracted_data = scan_invoice(tmp_path, api_key=api_key)
         
         status.update(label="Extraction Complete!", state="complete", expanded=False)
 
-    # Cleanup temp file
     os.remove(tmp_path)
 
-    # --- 5. RESULTS DISPLAY ---
+    # --- 6. RESULTS DISPLAY ---
     if extracted_data:
-        # Summary Metrics
         total_items = sum(item.get('qty', 0) for item in extracted_data)
         col1, col2 = st.columns(2)
         col1.metric("Packaging Line Items", len(extracted_data))
@@ -59,7 +66,6 @@ if uploaded_file is not None:
 
         st.divider()
         
-        # Detailed Cards
         for item in extracted_data:
             with st.container():
                 c1, c2, c3 = st.columns([2, 1, 1])
@@ -70,7 +76,6 @@ if uploaded_file is not None:
                 c3.write(f"**Dims:** {item.get('dims', 'N/A')}")
                 st.markdown("---")
         
-        # JSON Export for "Power Users"
         with st.expander("View Raw JSON (for API)"):
             st.json(extracted_data)
             
