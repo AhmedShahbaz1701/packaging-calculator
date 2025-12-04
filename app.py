@@ -3,6 +3,9 @@ import tempfile
 import os
 import csv
 import datetime
+import time
+import gspread
+from google.oauth2.service_account import Credentials
 from dotenv import load_dotenv
 from scan_invoice import scan_invoice
 
@@ -13,38 +16,75 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- 2. HYBRID KEY LOADER (The Fix) ---
-# This function checks Streamlit Secrets first (Cloud), then .env (Local)
+# --- 2. HYBRID KEY LOADER ---
 def get_api_key():
-    # 1. Try Streamlit Secrets (Cloud)
     if "GEMINI_API_KEY" in st.secrets:
         return st.secrets["GEMINI_API_KEY"]
-    
-    # 2. Try Local .env
     load_dotenv()
     return os.getenv("GEMINI_API_KEY")
 
 api_key = get_api_key()
 
-# --- 3. UI HEADER ---
+# --- 3. GOOGLE SHEETS INTEGRATION ---
+def save_lead_to_sheets(email, retries=3):
+    for i in range(retries):
+        try:
+            # Define Scopes
+            scopes = [
+                "https://www.googleapis.com/auth/spreadsheets",
+                "https://www.googleapis.com/auth/drive"
+            ]
+            
+            # Load Credentials from Streamlit Secrets
+            if "gcp_service_account" in st.secrets:
+                creds_dict = st.secrets["gcp_service_account"]
+                credentials = Credentials.from_service_account_info(
+                    creds_dict,
+                    scopes=scopes
+                )
+                
+                # Authenticate & Open Sheet
+                client = gspread.authorize(credentials)
+                sheet_url = st.secrets.get("SHEETS_URL") # Add SHEETS_URL to secrets
+                
+                if sheet_url:
+                    sheet = client.open_by_url(sheet_url).sheet1
+                    # Append Row: [Email, Timestamp, Action]
+                    timestamp = datetime.datetime.now().isoformat()
+                    sheet.append_row([email, timestamp, "Unlocked Report"])
+                    return True
+                else:
+                    raise Exception("SHEETS_URL not found in secrets.")
+            else:
+                raise Exception("GCP Credentials not found in secrets.")
+
+        except Exception as e:
+            if i < retries - 1:
+                time.sleep(2 ** i)  # Exponential backoff
+                continue
+            st.error(f"Error saving lead to Google Sheets after {retries} attempts: {e}")
+            return False
+    return False
+
+# --- 4. UI HEADER ---
 st.title("📦 Invoice Scanner")
 st.markdown("""
 Upload a PDF invoice (Uline, Alibaba, etc.) to extract packaging line items automatically.
 **Powered by Gemini 2.5 Flash**
 """)
 
-# --- 4. API KEY CHECK ---
+# --- 5. API KEY CHECK ---
 if not api_key:
     st.error("❌ API Key not found.")
     st.info("If running locally: Check your .env file.")
     st.info("If running on Streamlit Cloud: Go to App Settings > Secrets and add GEMINI_API_KEY.")
     st.stop()
 
-# --- 5. SESSION STATE INITIALIZATION ---
+# --- 6. SESSION STATE INITIALIZATION ---
 if "unlocked" not in st.session_state:
     st.session_state.unlocked = False
 
-# --- 6. MAIN APP ---
+# --- 7. MAIN APP ---
 uploaded_file = st.file_uploader("Upload Invoice (PDF)", type="pdf")
 
 if uploaded_file is not None:
@@ -52,7 +92,6 @@ if uploaded_file is not None:
         tmp_file.write(uploaded_file.getvalue())
         tmp_path = tmp_file.name
 
-    # We'll cache the extraction to avoid re-scanning on every rerun (like form submission)
     @st.cache_data(show_spinner=False)
     def cached_scan(path):
         return scan_invoice(path, api_key=api_key)
@@ -65,7 +104,7 @@ if uploaded_file is not None:
         
         status.update(label="Extraction Complete!", state="complete", expanded=False)
 
-    # --- 7. SUMMARY RESULTS (Visible to All) ---
+    # --- 8. SUMMARY RESULTS (Visible to All) ---
     if extracted_data:
         total_items = sum(item.get('qty', 0) for item in extracted_data)
         col1, col2 = st.columns(2)
@@ -74,7 +113,7 @@ if uploaded_file is not None:
 
         st.divider()
 
-        # --- 8. LEAD GEN GATE ---
+        # --- 9. LEAD GEN GATE ---
         if not st.session_state.unlocked:
             st.info("🔒 **Unlock Full Report**")
             st.markdown("Enter your email to view the detailed line-item breakdown and download the JSON data.")
@@ -85,20 +124,14 @@ if uploaded_file is not None:
                 
                 if submit_btn:
                     if email_input and "@" in email_input:
-                        # Save Lead
-                        try:
-                            with open("leads.csv", "a", newline="") as f:
-                                writer = csv.writer(f)
-                                writer.writerow([datetime.datetime.now().isoformat(), email_input])
-                        except Exception as e:
-                            st.error(f"Error saving lead: {e}")
-
-                        st.session_state.unlocked = True
-                        st.rerun() # Rerun to show unlocked content
+                        # Call Save Function
+                        if save_lead_to_sheets(email_input):
+                            st.session_state.unlocked = True
+                            st.rerun()
                     else:
                         st.warning("Please enter a valid email address.")
         
-        # --- 9. PREMIUM CONTENT (Unlocked) ---
+        # --- 10. PREMIUM CONTENT (Unlocked) ---
         if st.session_state.unlocked:
             st.success("Report Unlocked! ✅")
             
@@ -116,7 +149,6 @@ if uploaded_file is not None:
             with st.expander("View Raw JSON (for API)"):
                 st.json(extracted_data)
             
-            # Reset button to test again (Optional, helpful for dev)
             if st.button("Start New Scan"):
                 st.session_state.unlocked = False
                 st.rerun()
