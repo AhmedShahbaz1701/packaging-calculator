@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSRD Weight Data: 19x24 Poly Mailer (Large) (19x24x0.1 in) - Compliance Code & Fees</title>
+    <title>CSRD Weight Data: DHL Bottle Box (Packset F) (38.0x12.0x12.0 cm) - Compliance Code & Fees</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -57,8 +57,8 @@
             <!-- Breadcrumbs -->
             <nav class="text-xs text-slate-400 mb-4 font-mono">
                 <a href="index.html" class="hover:text-emerald-400 transition-colors">Home</a> &gt; 
-                <a href="#" class="hover:text-emerald-400 transition-colors capitalize">poly</a> &gt; 
-                <span class="text-white">19x24 Poly Mailer (Large)</span>
+                <a href="#" class="hover:text-emerald-400 transition-colors capitalize">box_double</a> &gt; 
+                <span class="text-white">DHL Bottle Box (Packset F)</span>
             </nav>
 
             <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Open Packaging Weight Calculator</h1>
@@ -80,9 +80,9 @@
                     <div class="relative">
                         <select id="boxType" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-emerald-500 focus:border-emerald-500 block p-2.5 appearance-none">
                             <option value="single_wall" data-type="box" data-mat="PAP 20" data-gsm="450" data-recycled="70% (Industry Avg)" >Standard Shipping Box (Single Wall) - Corrugated</option>
-                            <option value="double_wall" data-type="box" data-mat="PAP 20" data-gsm="750" data-recycled="70% (Industry Avg)" >Heavy Duty Box (Double Wall) - Corrugated</option>
+                            <option value="double_wall" data-type="box" data-mat="PAP 20" data-gsm="750" data-recycled="70% (Industry Avg)" selected>Heavy Duty Box (Double Wall) - Corrugated</option>
                             <option value="kraft_mailer" data-type="envelope" data-mat="PAP 21" data-gsm="250" data-recycled="100% (Industry Avg)" >Kraft Mailer Envelope - Paperboard</option>
-                            <option value="poly_mailer" data-type="envelope" data-mat="LDPE 4" data-gsm="120" data-recycled="30% (Industry Avg)" selected>Poly Mailer Bag - LDPE</option>
+                            <option value="poly_mailer" data-type="envelope" data-mat="LDPE 4" data-gsm="120" data-recycled="30% (Industry Avg)" >Poly Mailer Bag - LDPE</option>
                         </select>
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-700">
                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
@@ -98,15 +98,15 @@
                         <label class="block text-sm font-medium text-slate-600">Dimensions</label>
                         <div class="flex space-x-2">
                             <div class="flex-1">
-                                <input type="number" id="length" placeholder="L" value="19" class="w-full bg-slate-50 border border-slate-300 p-2.5 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm" min="0" step="0.1">
+                                <input type="number" id="length" placeholder="L" value="38.0" class="w-full bg-slate-50 border border-slate-300 p-2.5 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm" min="0" step="0.1">
                                 <span class="text-xs text-slate-400 ml-1">Length</span>
                             </div>
                             <div class="flex-1">
-                                <input type="number" id="width" placeholder="W" value="24" class="w-full bg-slate-50 border border-slate-300 p-2.5 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm" min="0" step="0.1">
+                                <input type="number" id="width" placeholder="W" value="12.0" class="w-full bg-slate-50 border border-slate-300 p-2.5 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm" min="0" step="0.1">
                                 <span class="text-xs text-slate-400 ml-1">Width</span>
                             </div>
                             <div class="flex-1 transition-opacity duration-300" id="heightContainer">
-                                <input type="number" id="height" placeholder="H" value="0.1" class="w-full bg-slate-50 border border-slate-300 p-2.5 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm" min="0" step="0.1">
+                                <input type="number" id="height" placeholder="H" value="12.0" class="w-full bg-slate-50 border border-slate-300 p-2.5 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm" min="0" step="0.1">
                                 <span class="text-xs text-slate-400 ml-1">Height</span>
                             </div>
                         </div>
@@ -133,10 +133,10 @@
                     <div>
                         <h3 class="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">Estimated Weight</h3>
                         <div class="flex items-baseline gap-2">
-                            <span id="weightGrams" class="text-4xl font-bold">71</span>
+                            <span id="weightGrams" class="text-4xl font-bold">214</span>
                             <span class="text-xl text-slate-400">g</span>
                             <span class="text-slate-500 text-sm mx-2">/</span>
-                            <span id="weightKg" class="text-xl text-slate-300">0.071</span>
+                            <span id="weightKg" class="text-xl text-slate-300">0.214</span>
                             <span class="text-slate-400 text-sm">kg</span>
                         </div>
                     </div>

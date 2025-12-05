@@ -1,37 +1,46 @@
 import os
 from jinja2 import Environment, FileSystemLoader
 
-# 1. The Data Source
+# 1. The Data Source (Global Standards)
 data_sources = [
-    # Common Cubes (The "Amazon Standards")
-    {"name": "4x4x4 Cube", "l": 4, "w": 4, "h": 4, "type": "box", "wall": "single"},
-    {"name": "6x6x6 Cube", "l": 6, "w": 6, "h": 6, "type": "box", "wall": "single"},
-    {"name": "8x8x8 Cube", "l": 8, "w": 8, "h": 8, "type": "box", "wall": "single"},
-    {"name": "10x10x10 Cube", "l": 10, "w": 10, "h": 10, "type": "box", "wall": "single"},
-    {"name": "12x12x12 Cube", "l": 12, "w": 12, "h": 12, "type": "box", "wall": "double"},
-    {"name": "18x18x18 Large", "l": 18, "w": 18, "h": 18, "type": "box", "wall": "double"},
+    # --- US Standards (Inches) ---
+    {"name": "4x4x4 Cube", "l": 4, "w": 4, "h": 4, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "6x6x6 Cube", "l": 6, "w": 6, "h": 6, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "8x8x8 Cube", "l": 8, "w": 8, "h": 8, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "10x10x10 Cube", "l": 10, "w": 10, "h": 10, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "12x12x12 Cube", "l": 12, "w": 12, "h": 12, "type": "box_double", "wall": "double", "unit": "in"},
+    {"name": "18x18x18 Large", "l": 18, "w": 18, "h": 18, "type": "box_double", "wall": "double", "unit": "in"},
+    {"name": "FedEx Small Box", "l": 10.9, "w": 1.5, "h": 12.4, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "FedEx Medium Box", "l": 13.3, "w": 11.5, "h": 2.4, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "FedEx Large Box", "l": 17.9, "w": 12.4, "h": 3.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "FedEx Extra Large Box", "l": 11.9, "w": 10.8, "h": 11.0, "type": "box_double", "wall": "double", "unit": "in"},
+    {"name": "USPS Small Flat Rate", "l": 8.6, "w": 5.4, "h": 1.6, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "USPS Medium Flat Rate (Top)", "l": 11.0, "w": 8.5, "h": 5.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "USPS Medium Flat Rate (Side)", "l": 13.6, "w": 11.9, "h": 3.4, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "USPS Large Flat Rate", "l": 12.0, "w": 12.0, "h": 5.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "10x13 Poly Mailer (T-Shirt)", "l": 10, "w": 13, "h": 0.1, "type": "poly", "wall": "n/a", "unit": "in"},
+    {"name": "14.5x19 Poly Mailer (Jacket)", "l": 14.5, "w": 19, "h": 0.1, "type": "poly", "wall": "n/a", "unit": "in"},
+    {"name": "19x24 Poly Mailer (Large)", "l": 19, "w": 24, "h": 0.1, "type": "poly", "wall": "n/a", "unit": "in"},
+    {"name": "#0 Kraft Bubble Mailer", "l": 6, "w": 10, "h": 0.5, "type": "kraft", "wall": "n/a", "unit": "in"},
+    {"name": "#2 Kraft Bubble Mailer", "l": 8.5, "w": 12, "h": 0.5, "type": "kraft", "wall": "n/a", "unit": "in"},
+    {"name": "#5 Kraft Bubble Mailer", "l": 10.5, "w": 16, "h": 0.5, "type": "kraft", "wall": "n/a", "unit": "in"},
 
-    # FedEx Standard Sizes
-    {"name": "FedEx Small Box", "l": 10.9, "w": 1.5, "h": 12.4, "type": "box", "wall": "single"},
-    {"name": "FedEx Medium Box", "l": 13.3, "w": 11.5, "h": 2.4, "type": "box", "wall": "single"},
-    {"name": "FedEx Large Box", "l": 17.9, "w": 12.4, "h": 3.0, "type": "box", "wall": "single"},
-    {"name": "FedEx Extra Large Box", "l": 11.9, "w": 10.8, "h": 11.0, "type": "box", "wall": "double"},
+    # --- Germany: DHL Packsets (Centimeters) ---
+    {"name": "DHL Packset XS", "l": 22.5, "w": 14.5, "h": 3.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "DHL Packset S", "l": 25.0, "w": 17.5, "h": 10.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "DHL Packset M", "l": 37.5, "w": 30.0, "h": 13.5, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "DHL Packset L", "l": 45.0, "w": 35.0, "h": 20.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "DHL Bottle Box (Packset F)", "l": 38.0, "w": 12.0, "h": 12.0, "type": "box_double", "wall": "double", "unit": "cm"},
 
-    # USPS Flat Rate Sizes
-    {"name": "USPS Small Flat Rate", "l": 8.6, "w": 5.4, "h": 1.6, "type": "box", "wall": "single"},
-    {"name": "USPS Medium Flat Rate (Top)", "l": 11.0, "w": 8.5, "h": 5.5, "type": "box", "wall": "single"},
-    {"name": "USPS Medium Flat Rate (Side)", "l": 13.6, "w": 11.9, "h": 3.4, "type": "box", "wall": "single"},
-    {"name": "USPS Large Flat Rate", "l": 12.0, "w": 12.0, "h": 5.5, "type": "box", "wall": "single"},
-    
-    # Common Poly Mailers
-    {"name": "10x13 Poly Mailer (T-Shirt)", "l": 10, "w": 13, "h": 0.1, "type": "poly", "wall": "n/a"},
-    {"name": "14.5x19 Poly Mailer (Jacket)", "l": 14.5, "w": 19, "h": 0.1, "type": "poly", "wall": "n/a"},
-    {"name": "19x24 Poly Mailer (Large)", "l": 19, "w": 24, "h": 0.1, "type": "poly", "wall": "n/a"},
-    
-    # Common Kraft Mailers
-    {"name": "#0 Kraft Bubble Mailer", "l": 6, "w": 10, "h": 0.5, "type": "kraft", "wall": "n/a"},
-    {"name": "#2 Kraft Bubble Mailer", "l": 8.5, "w": 12, "h": 0.5, "type": "kraft", "wall": "n/a"},
-    {"name": "#5 Kraft Bubble Mailer", "l": 10.5, "w": 16, "h": 0.5, "type": "kraft", "wall": "n/a"},
+    # --- France: Colissimo Ready-to-Ship (Centimeters) ---
+    {"name": "Colissimo Box M", "l": 23.0, "w": 13.0, "h": 12.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "Colissimo Box L", "l": 29.0, "w": 21.0, "h": 15.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "Colissimo Box XL", "l": 40.0, "w": 27.5, "h": 19.5, "type": "box_double", "wall": "double", "unit": "cm"},
+    {"name": "Colissimo Bottle Box", "l": 37.0, "w": 10.0, "h": 10.0, "type": "box_double", "wall": "double", "unit": "cm"},
+
+    # --- UK: Royal Mail Limits (Centimeters) ---
+    {"name": "Royal Mail Small Parcel (Max)", "l": 45.0, "w": 35.0, "h": 16.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "Royal Mail Medium Parcel (Max)", "l": 61.0, "w": 46.0, "h": 46.0, "type": "box_double", "wall": "double", "unit": "cm"},
 ]
 
 # Setup Jinja2 Environment
@@ -45,35 +54,42 @@ if not os.path.exists(output_dir):
 
 # 2. The Logic
 for item in data_sources:
-    l_in = item['l']
-    w_in = item['w']
-    h_in = item['h']
+    raw_l = item['l']
+    raw_w = item['w']
+    raw_h = item['h']
+    unit = item['unit'] # 'in' or 'cm'
     
-    # Convert to meters
-    l_m = l_in * 0.0254
-    w_m = w_in * 0.0254
-    h_m = h_in * 0.0254
+    # Determine Conversion Factor
+    if unit == 'in':
+        to_meters = 0.0254
+    else: # 'cm'
+        to_meters = 0.01
+    
+    # Convert to meters for physics calculation
+    l_m = raw_l * to_meters
+    w_m = raw_w * to_meters
+    h_m = raw_h * to_meters
     
     weight_g = 0
     selected_value = ""
 
     # Calculate Weight
-    if item['type'] == 'box':
+    if item['type'] == 'box_single':
         # Surface area = 2(lw+lh+wh)
         base_area = 2 * ((l_m * w_m) + (l_m * h_m) + (w_m * h_m))
+        # Single Wall Box: 450 GSM. Area * 1.25
+        weight_g = base_area * 1.25 * 450
+        selected_value = "single_wall"
         
-        if item['wall'] == 'single':
-            # Single Wall Box: 450 GSM. Area * 1.25
-            weight_g = base_area * 1.25 * 450
-            selected_value = "single_wall"
-        elif item['wall'] == 'double':
-            # Double Wall Box: 750 GSM. Area * 1.35
-            weight_g = base_area * 1.35 * 750
-            selected_value = "double_wall"
+    elif item['type'] == 'box_double':
+        # Surface area = 2(lw+lh+wh)
+        base_area = 2 * ((l_m * w_m) + (l_m * h_m) + (w_m * h_m))
+        # Double Wall Box: 750 GSM. Area * 1.35
+        weight_g = base_area * 1.35 * 750
+        selected_value = "double_wall"
             
     elif item['type'] == 'poly':
         # Poly Mailer: 120 GSM (2 layers). Area = 2*(l*w)
-        # Note: The prompt says "Area = 2*(l*w)". It implies front and back.
         area = 2 * (l_m * w_m)
         weight_g = area * 120
         selected_value = "poly_mailer"
@@ -91,15 +107,16 @@ for item in data_sources:
     filename = f"{slug}-weight-csrd.html"
     
     # SEO Title
-    seo_title = f"CSRD Weight Data: {item['name']} ({l_in}x{w_in}x{h_in}) - Compliance Code & Fees"
+    seo_title = f"CSRD Weight Data: {item['name']} ({raw_l}x{raw_w}x{raw_h} {unit}) - Compliance Code & Fees"
     
     # Render Template
     output_html = template.render(
         name=item['name'],
-        type=item['type'], # for breadcrumb
-        l=l_in,
-        w=w_in,
-        h=h_in,
+        type=item['type'], # for breadcrumb (can be raw type)
+        l=raw_l,
+        w=raw_w,
+        h=raw_h,
+        unit=unit, # Pass unit to template
         weight_g=round(weight_g),
         weight_kg=f"{weight_kg:.3f}",
         seo_title=seo_title,
@@ -117,8 +134,7 @@ print("Done generating pages.")
 def generate_sitemap():
     print("Generating sitemap.xml...")
     base_url = "https://tare.fyi"
-    sitemap_content = """
-<?xml version="1.0" encoding="UTF-8"?>
+    sitemap_content = """<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 """
 
@@ -142,8 +158,7 @@ def generate_sitemap():
 # 4. Generate robots.txt
 def generate_robots_txt():
     print("Generating robots.txt...")
-    robots_content = """
-User-agent: *
+    robots_content = """User-agent: *
 Allow: /
 Sitemap: https://tare.fyi/sitemap.xml
 """
