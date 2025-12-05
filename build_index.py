@@ -23,7 +23,7 @@ def build_index():
         clean_name = clean_name.replace('-', ' ').title()
         
         # Specific fix for acronyms if needed (optional polish)
-        clean_name = clean_name.replace('Usps', 'USPS').replace('Fedex', 'FedEx')
+        clean_name = clean_name.replace('Usps', 'USPS').replace('Fedex', 'FedEx').replace('Dhl', 'DHL')
 
         card = f"""
         <div class="card-item bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-slate-200 overflow-hidden flex flex-col">
