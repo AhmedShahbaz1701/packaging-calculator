@@ -40,7 +40,7 @@ def build_scanner():
                     <input type="file" id="fileInput" class="hidden" accept="application/pdf">
                 </label>
                 <p class="text-xs text-slate-400 mt-2">🔒 Processed in-memory. Not stored.</p>
-                <p class="text-xs text-slate-500 mt-4 text-center">⚡ Used by 400+ merchants this week to check compliance.</p>
+                <p class="text-xs text-slate-500 mt-4 text-center">⚡ Used by 500+ merchants this week to check compliance.</p>
             </div>
 
             <div id="loading" class="hidden p-10 text-center">
@@ -79,7 +79,7 @@ def build_scanner():
                 <input type="email" name="email" placeholder="Enter your email" required class="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 text-slate-900 text-sm focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900">
                 <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2 rounded-lg text-sm font-bold transition">Get the App Beta</button>
             </form>
-            <p class="text-xs text-slate-400 mt-4 flex items-center justify-center gap-1">⚡ Used by 400+ merchants this week</p>
+            <p class="text-xs text-slate-400 mt-4 flex items-center justify-center gap-1">⚡ Used by 500+ merchants this week</p>
             <p id="optinSuccess" class="hidden text-emerald-600 text-sm mt-3 font-medium">Thanks! We'll keep you posted.</p>
         </div>
 
