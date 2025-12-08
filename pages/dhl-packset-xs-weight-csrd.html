@@ -126,6 +126,12 @@
                     </div>
                 </div>
 
+                <!-- Forecast Qty -->
+                <div class="pt-4 border-t border-slate-100">
+                    <label for="forecastQty" class="block text-sm font-medium text-slate-600 mb-1">Forecasted Annual Volume (Qty)</label>
+                    <input type="number" id="forecastQty" placeholder="e.g., 500" value="1" class="w-full bg-slate-50 border border-slate-300 p-2.5 rounded-lg focus:ring-emerald-500 focus:border-emerald-500 text-sm" min="1">
+                </div>
+
             </section>
 
             <!-- Output Section -->
@@ -161,6 +167,26 @@
                         <p class="text-slate-400 text-xs mb-1">Recycled Content (Est.)</p>
                         <p id="recycledContent" class="text-lg text-white">---</p>
                     </div>
+                </div>
+            </section>
+
+            <!-- Liability Report Section -->
+            <section id="liabilitySection" class="bg-amber-50 rounded-xl p-6 border border-amber-200">
+                <h3 class="text-amber-800 text-sm font-bold uppercase tracking-wider mb-4">Your 2026 Liability Report</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-amber-600 text-xs mb-1">Total Paper Weight</p>
+                        <p id="totalPaper" class="text-2xl font-bold text-amber-900">0.0 kg</p>
+                    </div>
+                    <div>
+                        <p class="text-amber-600 text-xs mb-1">Total Plastic Weight</p>
+                        <p id="totalPlastic" class="text-2xl font-bold text-amber-900">0.0 kg</p>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-amber-200 flex items-center justify-between">
+                    <span class="text-xs text-amber-700 italic">Copy these values directly to LUCID.</span>
                 </div>
             </section>
 
@@ -210,6 +236,7 @@
         const widthInput = document.getElementById('width');
         const heightInput = document.getElementById('height');
         const heightContainer = document.getElementById('heightContainer');
+        const forecastQtyInput = document.getElementById('forecastQty');
         
         const btnCm = document.getElementById('btn-cm');
         const btnIn = document.getElementById('btn-in');
@@ -220,6 +247,10 @@
         const weightKgEl = document.getElementById('weightKg');
         const materialCodeEl = document.getElementById('materialCode');
         const recycledContentEl = document.getElementById('recycledContent');
+        
+        const totalPaperEl = document.getElementById('totalPaper');
+        const totalPlasticEl = document.getElementById('totalPlastic');
+
         const copyBtn = document.getElementById('copyBtn');
         const toast = document.getElementById('toast');
 
@@ -242,7 +273,7 @@
 
         function addListeners() {
             // Inputs
-            [lengthInput, widthInput, heightInput].forEach(input => {
+            [lengthInput, widthInput, heightInput, forecastQtyInput].forEach(input => {
                 input.addEventListener('input', calculate);
             });
 
@@ -302,24 +333,21 @@
             let l = parseFloat(lengthInput.value);
             let w = parseFloat(widthInput.value);
             let h = parseFloat(heightInput.value);
+            let qty = parseInt(forecastQtyInput.value) || 1;
 
             // Basic Validation
             const isBox = type === 'box';
-            if (!l || !w || (isBox && !h && h !== 0)) { // Check if values exist. Note: h can be 0 if entered manually but usually >0
+            if (!l || !w || (isBox && !h && h !== 0)) { 
                  if (isBox && isNaN(h)) {
-                    // If it is a box and H is missing, do not toggle output off if we already have static data? 
-                    // Actually, we want to update if user changes things.
-                    // But initially, inputs are populated.
+                    // check if missing H for box
                  }
             }
 
-            // If inputs are empty/invalid, we might want to hide output, BUT for this static site
-            // we start with valid data. If user clears it, we hide.
+            // If inputs are empty/invalid
             if (isNaN(l) || isNaN(w) || (isBox && isNaN(h))) {
                 toggleOutput(false);
                 return;
             }
-
 
             // Default H to 0 if not applicable
             if (!isBox) h = 0;
@@ -336,16 +364,15 @@
                 const wallType = selectedOption.dataset.wall;
                 const baseArea = 2 * ((l_m * w_m) + (l_m * h_m) + (w_m * h_m));
                 if (wallType === 'single') {
-                    area_m2 = baseArea * 1.25; // Single Wall Box: 1.25 factor
+                    area_m2 = baseArea * 1.25; 
                 } else if (wallType === 'double') {
-                    area_m2 = baseArea * 1.35; // Double Wall Box: 1.35 factor
+                    area_m2 = baseArea * 1.35; 
                 }
             } else { // type is 'envelope'
-                // Differentiate between Poly Mailer and Kraft Mailer
                 if (selectedOption.value === 'poly_mailer') {
-                    area_m2 = (2 * l_m * w_m); // Poly Mailer: 2 faces, no additional flap factor
+                    area_m2 = (2 * l_m * w_m); 
                 } else if (selectedOption.value === 'kraft_mailer') {
-                    area_m2 = (2 * l_m * w_m) * 1.10; // Kraft Mailer: 2 faces + 10% flap
+                    area_m2 = (2 * l_m * w_m) * 1.10; 
                 }
             }
 
@@ -353,8 +380,20 @@
             const weight_g = area_m2 * gsm;
             const weight_kg = weight_g / 1000;
 
+            // Liability Calculation
+            const total_weight_kg = weight_kg * qty;
+            
+            let paper_kg = 0;
+            let plastic_kg = 0;
+
+            if (matCode.startsWith('PAP')) {
+                paper_kg = total_weight_kg;
+            } else if (matCode.startsWith('LDPE')) {
+                plastic_kg = total_weight_kg;
+            }
+
             // Update UI
-            updateOutput(weight_g, weight_kg, matCode, recycled);
+            updateOutput(weight_g, weight_kg, matCode, recycled, paper_kg, plastic_kg);
             toggleOutput(true);
         }
 
@@ -362,31 +401,58 @@
             if (active) {
                 outputSection.classList.remove('opacity-50', 'cursor-not-allowed');
                 outputOverlay.classList.add('hidden');
+                document.getElementById('liabilitySection').classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
                 outputSection.classList.add('opacity-50', 'cursor-not-allowed');
                 outputOverlay.classList.remove('hidden');
+                document.getElementById('liabilitySection').classList.add('opacity-50', 'cursor-not-allowed');
                 
                 weightGramsEl.textContent = '0';
                 weightKgEl.textContent = '0.00';
                 materialCodeEl.textContent = '---';
                 recycledContentEl.textContent = '---';
+                totalPaperEl.textContent = '0.0 kg';
+                totalPlasticEl.textContent = '0.0 kg';
             }
         }
 
-        function updateOutput(g, kg, code, rec) {
+        function updateOutput(g, kg, code, rec, paper, plastic) {
             weightGramsEl.textContent = Math.round(g).toLocaleString();
             weightKgEl.textContent = kg.toFixed(3);
             materialCodeEl.textContent = code;
             recycledContentEl.textContent = rec;
+
+            totalPaperEl.textContent = paper > 0 ? paper.toFixed(2) + ' kg' : '0.0 kg';
+            totalPlasticEl.textContent = plastic > 0 ? plastic.toFixed(2) + ' kg' : '0.0 kg';
+
+            // Visual dimming
+            if (paper > 0) {
+                totalPaperEl.classList.remove('text-amber-300');
+                totalPaperEl.classList.add('text-amber-900');
+                totalPlasticEl.classList.add('text-amber-300');
+                totalPlasticEl.classList.remove('text-amber-900');
+            } else if (plastic > 0) {
+                totalPlasticEl.classList.remove('text-amber-300');
+                totalPlasticEl.classList.add('text-amber-900');
+                totalPaperEl.classList.add('text-amber-300');
+                totalPaperEl.classList.remove('text-amber-900');
+            } else {
+                 // Reset
+                totalPaperEl.classList.add('text-amber-900');
+                totalPlasticEl.classList.add('text-amber-900');
+            }
         }
 
         function copyToClipboard() {
             const weightG = weightGramsEl.textContent;
             const weightKg = weightKgEl.textContent;
             const mat = materialCodeEl.textContent;
-            const rec = recycledContentEl.textContent;
-
-            const textToCopy = `Weight: ${weightG}g (${weightKg}kg)\tMaterial: ${mat}\tRecycled: ${rec}`;
+            
+            // Get totals
+            const p = totalPaperEl.textContent;
+            const pl = totalPlasticEl.textContent;
+            
+            const textToCopy = `Unit Weight: ${weightG}g\tMaterial: ${mat}\tTotal Paper: ${p}\tTotal Plastic: ${pl}`;
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showToast();
