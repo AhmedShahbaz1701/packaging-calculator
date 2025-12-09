@@ -325,6 +325,30 @@
             }
         }
 
+        // Usage Logging Logic
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+
+        const logCalculation = debounce(async (data) => {
+            const WORKER_LOG_URL = "https://tare-scanner-api.20051701as.workers.dev/log-calculation";
+            try {
+                await fetch(WORKER_LOG_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+            } catch (err) {
+                // Silent fail as requested
+                console.debug("Log failed", err);
+            }
+        }, 2000); // 2 second debounce
+
         function calculate() {
             const selectedOption = boxTypeSelect.options[boxTypeSelect.selectedIndex];
             const type = selectedOption.dataset.type; // 'box' or 'envelope'
@@ -397,6 +421,17 @@
             // Update UI
             updateOutput(weight_g, weight_kg, matCode, recycled, paper_kg, plastic_kg);
             toggleOutput(true);
+
+            // Log the calculation (Fire and forget, debounced)
+            logCalculation({
+                box_name: selectedOption.text,
+                l: l,
+                w: w,
+                h: h,
+                unit: currentUnit,
+                weight_grams: weight_g,
+                qty: qty
+            });
         }
 
         function toggleOutput(active) {
