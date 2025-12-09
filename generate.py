@@ -41,6 +41,29 @@ data_sources = [
     # --- UK: Royal Mail Limits (Centimeters) ---
     {"name": "Royal Mail Small Parcel (Max)", "l": 45.0, "w": 35.0, "h": 16.0, "type": "box_single", "wall": "single", "unit": "cm"},
     {"name": "Royal Mail Medium Parcel (Max)", "l": 61.0, "w": 46.0, "h": 46.0, "type": "box_double", "wall": "double", "unit": "cm"},
+
+    # --- Amazon Standard Boxes (Inches) ---
+    {"name": "Amazon Box A1", "l": 10.0, "w": 7.0, "h": 3.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Amazon Box A3", "l": 12.5, "w": 10.0, "h": 4.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Amazon Box 10", "l": 8.75, "w": 6.0, "h": 3.25, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Amazon Box 20", "l": 8.5, "w": 6.0, "h": 4.0, "type": "box_single", "wall": "single", "unit": "in"},
+
+    # --- Uline Best Sellers (Inches) ---
+    {"name": "Uline S-4481 (Long)", "l": 4.0, "w": 4.0, "h": 12.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Uline S-4193 (Cube)", "l": 36.0, "w": 36.0, "h": 36.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Uline S-16568 (Indestructo)", "l": 7.0, "w": 5.0, "h": 3.0, "type": "box_single", "wall": "single", "unit": "in"},
+
+    # --- Canada Post Flat Rate (Centimeters) ---
+    {"name": "Canada Post Flat Rate XS", "l": 22.5, "w": 15.5, "h": 7.6, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "Canada Post Flat Rate Small", "l": 35.0, "w": 26.0, "h": 5.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "Canada Post Flat Rate Medium", "l": 37.9, "w": 26.0, "h": 12.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "Canada Post Flat Rate Large", "l": 40.3, "w": 29.8, "h": 18.7, "type": "box_single", "wall": "single", "unit": "cm"},
+
+    # --- RAJAPACK Europe Standards (Centimeters) ---
+    {"name": "RAJA Single Wall (Ref 1)", "l": 20.0, "w": 15.0, "h": 10.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "RAJA Single Wall (Ref 2)", "l": 30.0, "w": 20.0, "h": 15.0, "type": "box_single", "wall": "single", "unit": "cm"},
+    {"name": "RAJA Double Wall (Heavy)", "l": 40.0, "w": 30.0, "h": 20.0, "type": "box_double", "wall": "double", "unit": "cm"},
+    {"name": "RAJA Long Box (Posters)", "l": 61.0, "w": 10.5, "h": 10.5, "type": "box_single", "wall": "single", "unit": "cm"},
 ]
 
 # Setup Jinja2 Environment
