@@ -231,6 +231,31 @@
         <span>Copied to clipboard!</span>
     </div>
 
+    <!-- Lead Gen Modal -->
+    <div id="leadGenModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="bg-amber-50 border-b border-amber-100 p-4 flex justify-between items-center">
+                <h3 class="text-amber-900 font-bold text-sm uppercase tracking-wide">⚠️ LUCID Deadline: Dec 31st</h3>
+                <button id="closeModalBtn" class="text-amber-800 hover:text-amber-900 focus:outline-none">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6 text-center">
+                <p class="text-slate-600 text-sm mb-6">Don't estimate your 2026 forecast manually. Get the app that syncs your order history.</p>
+                <div class="space-y-3">
+                    <button id="modalCtaBtn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg">
+                        Get Early Access
+                    </button>
+                    <button id="modalDismissBtn" class="text-xs text-slate-400 hover:text-slate-600 underline">
+                        I'll do it manually
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // DOM Elements
         const boxTypeSelect = document.getElementById('boxType');
@@ -291,6 +316,49 @@
 
             // Copy
             copyBtn.addEventListener('click', copyToClipboard);
+
+            // Modal Logic
+            const modal = document.getElementById('leadGenModal');
+            const modalContent = document.getElementById('modalContent');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const modalDismissBtn = document.getElementById('modalDismissBtn');
+            const modalCtaBtn = document.getElementById('modalCtaBtn');
+
+            // Show Modal Logic
+            setTimeout(() => {
+                const hasSeenModal = localStorage.getItem('hasSeenLeadGenModal');
+                if (!hasSeenModal) {
+                    modal.classList.remove('hidden');
+                    // Small delay to allow display:block to apply before opacity transition
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modalContent.classList.remove('scale-95');
+                        modalContent.classList.add('scale-100');
+                    }, 50);
+                }
+            }, 4000);
+
+            function closeModal() {
+                modal.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+                localStorage.setItem('hasSeenLeadGenModal', 'true');
+            }
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modalDismissBtn.addEventListener('click', closeModal);
+
+            modalCtaBtn.addEventListener('click', () => {
+                closeModal();
+                document.getElementById('leadGenForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight the email input
+                setTimeout(() => {
+                    document.querySelector('#leadGenForm input').focus();
+                }, 500);
+            });
         }
 
         function setUnit(unit) {

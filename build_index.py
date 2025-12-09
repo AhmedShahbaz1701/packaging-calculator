@@ -41,7 +41,7 @@ def build_index():
                 <p class="text-sm text-slate-500">Instant packaging weight calculation for CSRD compliance.</p>
             </div>
             <div class="bg-slate-50 px-5 py-3 border-t border-slate-100">
-                <a href="{pages_dir}/{filename}" class="block w-full text-center text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition-colors">
+                <a href="/{pages_dir}/{filename}" class="block w-full text-center text-sm font-semibold text-emerald-700 hover:text-emerald-800 transition-colors">
                     View Data &rarr;
                 </a>
             </div>

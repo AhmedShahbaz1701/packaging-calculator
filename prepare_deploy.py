@@ -18,7 +18,7 @@ def prepare_deploy():
     print(f"Created '{public_dir}' directory.")
 
     # 2. Copy files
-    files_to_copy = [index_src, scanner_src, sitemap_src, robots_src]
+    files_to_copy = [index_src, scanner_src, sitemap_src, robots_src, '404.html']
     
     for file_src in files_to_copy:
         if os.path.exists(file_src):
