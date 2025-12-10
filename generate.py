@@ -95,6 +95,36 @@ data_sources = [
     # Art & Stationery
     {"name": "Picture Frame Mailer (8x10)", "l": 13.0, "w": 10.0, "h": 2.0, "type": "box_single", "wall": "single", "unit": "in"},
     {"name": "Stationery Box (A5 Shallow)", "l": 9.0, "w": 6.5, "h": 1.0, "type": "box_single", "wall": "single", "unit": "in"},
+
+    # --- Beauty & Cosmetics (High Volume) ---
+    {"name": "Lipstick Box (Standard)", "l": 0.8, "w": 0.8, "h": 3.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Eyeliner/Mascara Box", "l": 0.6, "w": 0.6, "h": 5.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Compact Powder Box", "l": 3.0, "w": 3.0, "h": 1.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Skincare Dropper Box (30ml)", "l": 1.5, "w": 1.5, "h": 4.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Hair Extension Mailer (Long)", "l": 12.0, "w": 5.0, "h": 1.5, "type": "box_single", "wall": "single", "unit": "in"},
+
+    # --- Consumer Tech ---
+    {"name": "Smartphone Box (Standard)", "l": 7.0, "w": 4.0, "h": 2.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Phone Case Mailer (Slim)", "l": 7.5, "w": 4.5, "h": 0.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Earbuds / AirPods Box", "l": 4.0, "w": 4.0, "h": 2.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Tablet Box (10 inch)", "l": 10.0, "w": 7.0, "h": 2.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Laptop Box (15 inch)", "l": 16.0, "w": 11.0, "h": 3.0, "type": "box_single", "wall": "single", "unit": "in"},
+
+    # --- Health & Supplements ---
+    {"name": "Supplement Bottle Box (Small)", "l": 2.5, "w": 2.5, "h": 4.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Protein Powder Tub Box (2lb)", "l": 6.0, "w": 6.0, "h": 10.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Vitamin Blister Pack Mailer", "l": 6.0, "w": 4.0, "h": 1.0, "type": "box_single", "wall": "single", "unit": "in"},
+
+    # --- Apparel & Accessories ---
+    {"name": "T-Shirt Box (Rigid)", "l": 10.0, "w": 8.0, "h": 2.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Hoodie Poly Mailer", "l": 15.0, "w": 12.0, "h": 2.0, "type": "poly", "wall": "n/a", "unit": "in"},
+    {"name": "Sunglasses Box", "l": 7.0, "w": 3.0, "h": 2.5, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Watch Box (Cube)", "l": 4.0, "w": 4.0, "h": 3.0, "type": "box_single", "wall": "single", "unit": "in"},
+
+    # --- Home & Hobbies ---
+    {"name": "Water Bottle Box (Standard)", "l": 3.0, "w": 3.0, "h": 10.0, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Funko Pop Protector Box", "l": 4.5, "w": 3.5, "h": 6.25, "type": "box_single", "wall": "single", "unit": "in"},
+    {"name": "Board Game Box (Standard)", "l": 12.0, "w": 12.0, "h": 3.0, "type": "box_double", "wall": "double", "unit": "in"},
 ]
 
 # Setup Jinja2 Environment
