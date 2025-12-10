@@ -75,10 +75,10 @@ def build_index():
 <body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
 
     <!-- Hero Section -->
-    <header class="bg-slate-850 text-white border-b border-slate-700 relative">
+    <header class="bg-slate-850 text-white border-b border-slate-700 relative overflow-hidden">
         <!-- Top Nav -->
-        <div class="absolute top-0 right-0 p-4 flex space-x-3">
-             <a href="scanner.html" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 transition-colors rounded-md shadow-sm">
+        <div class="absolute top-0 right-0 p-4 flex space-x-3 z-10">
+             <a href="/scanner.html" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 text-white hover:bg-emerald-700 transition-colors rounded-md shadow-sm">
                 ✨ AI Invoice Scanner
                 <span class="ml-2 inline-flex items-center rounded-full bg-yellow-400 px-2 py-0.5 text-xs font-medium text-yellow-900">New</span>
             </a>
@@ -87,17 +87,17 @@ def build_index():
             </a>
         </div>
 
-        <div class="max-w-5xl mx-auto px-4 py-12 md:py-16 text-center">
+        <div class="max-w-5xl mx-auto px-4 py-16 md:py-24 text-center relative z-0">
             <div class="inline-block mb-4 px-3 py-1 rounded-full bg-slate-700 border border-slate-600 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
                 Official Directory
             </div>
-            <h1 class="text-3xl md:text-5xl font-bold tracking-tight mb-4">LUCID Forecast for 2026 is due Dec 31st.</h1>
-            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-8">
-                Don't guess your Planned Volumes. Calculate exact compliance weights for DHL, Royal Mail & Colissimo in seconds.
+            <h1 class="text-4xl md:text-6xl font-bold tracking-tight mb-6">Ship to Germany & France without the Fines.</h1>
+            <p class="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10">
+                Free tools to calculate packaging taxes (LUCID/CITEO) and generate compliance reports.
             </p>
             
             <!-- Search Bar -->
-            <div class="max-w-lg mx-auto relative">
+            <div class="max-w-lg mx-auto relative mb-12">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
@@ -110,11 +110,46 @@ def build_index():
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 py-10">
+    <!-- Action Grid (Above Fold) -->
+    <section class="max-w-5xl mx-auto px-4 -mt-10 relative z-10 mb-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Card A: Data -->
+            <a href="#directory" class="bg-white p-6 rounded-xl shadow-lg border border-slate-200 hover:shadow-xl transition-all group">
+                <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-slate-200 transition-colors">
+                    <span class="text-2xl">🧮</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">I need Data</h3>
+                <p class="text-sm text-slate-500">Browse 80+ verified box weights for your report.</p>
+            </a>
+
+            <!-- Card B: Invoice (Highlighted) -->
+            <a href="/scanner.html" class="bg-white p-6 rounded-xl shadow-lg border-2 border-emerald-500 hover:shadow-emerald-200 transition-all group relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">NEW</div>
+                <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-emerald-100 transition-colors">
+                    <span class="text-2xl">📸</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">I have an Invoice</h3>
+                <p class="text-sm text-slate-500">Upload a PDF invoice to extract line items automatically.</p>
+            </a>
+
+            <!-- Card C: Guide -->
+            <a href="/lucid-guide.html" class="bg-white p-6 rounded-xl shadow-lg border border-slate-200 hover:shadow-xl transition-all group">
+                <div class="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mb-4 group-hover:bg-slate-200 transition-colors">
+                    <span class="text-2xl">📖</span>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2">I'm Confused</h3>
+                <p class="text-sm text-slate-500">Step-by-step registration guide for LUCID.</p>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Directory Section -->
+    <section id="directory" class="max-w-5xl mx-auto px-4 py-10 pt-0">
         
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold text-slate-800">Available Standards</h2>
+            <h2 class="text-xl font-bold text-slate-800">Packaging Database</h2>
             <span class="text-sm text-slate-500" id="count">{len(files)} Records Found</span>
         </div>
 
@@ -128,7 +163,7 @@ def build_index():
             <p class="text-slate-400 text-lg">No packaging formats found matching your search.</p>
         </div>
 
-    </main>
+    </section>
 
     <!-- Footer -->
     <footer class="bg-slate-50 border-t border-slate-200 mt-12 py-8">
