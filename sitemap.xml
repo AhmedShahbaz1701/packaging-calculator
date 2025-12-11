@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://tare.fyi/</loc></url>
+  <url><loc>https://tare.fyi/scanner.html</loc></url>
+  <url><loc>https://tare.fyi/lucid-guide.html</loc></url>
+  <url><loc>https://tare.fyi/thresholds-guide.html</loc></url>
   <url><loc>https://tare.fyi/pages/0-kraft-bubble-mailer-weight-csrd.html</loc></url>
   <url><loc>https://tare.fyi/pages/10x10x10-cube-weight-csrd.html</loc></url>
   <url><loc>https://tare.fyi/pages/10x13-poly-mailer-t-shirt-weight-csrd.html</loc></url>

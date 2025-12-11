@@ -225,6 +225,11 @@ def generate_sitemap():
     # Add Home Page
     sitemap_content += f'  <url><loc>{base_url}/</loc></url>\n'
 
+    # Add explicitly included pages
+    explicit_pages = ['scanner.html', 'lucid-guide.html', 'thresholds-guide.html']
+    for page in explicit_pages:
+        sitemap_content += f'  <url><loc>{base_url}/{page}</loc></url>\n'
+
     # Scan pages directory
     if os.path.exists(output_dir):
         files = [f for f in os.listdir(output_dir) if f.endswith(".html")]
@@ -235,7 +240,7 @@ def generate_sitemap():
     
     sitemap_content += '</urlset>'
     
-    with open("sitemap.xml", "w", encoding="utf-8") as f:
+    with open("sitemap.xml", "w", encoding='utf-8') as f:
         f.write(sitemap_content)
     print("sitemap.xml generated.")
 
