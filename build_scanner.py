@@ -146,6 +146,62 @@ def build_scanner():
             }
         }
 
+        function calculateLiability(items) {
+            let totalPaper = 0;
+            let totalPlastic = 0;
+
+            items.forEach(item => {
+                const name = (item.name || "").toLowerCase();
+                const qty = parseInt(item.qty) || 0;
+                
+                // Parse dimensions (naive parser: looks for numbers)
+                const dims = (item.dims || "").toLowerCase().replace(/[^\d.x]/g, '');
+                const parts = dims.split('x').map(parseFloat).filter(n => !isNaN(n));
+                
+                let l = parts[0] || 0;
+                let w = parts[1] || 0;
+                let h = parts[2] || 0;
+
+                // Convert to meters (Assume Inches)
+                const IN_TO_M = 0.0254;
+                l *= IN_TO_M;
+                w *= IN_TO_M;
+                h *= IN_TO_M;
+
+                let weight = 0;
+
+                // Determine Material & Weight
+                if (name.includes('poly') || name.includes('plastic') || name.includes('bag')) {
+                    // Poly Mailer: 120 GSM
+                    const area = 2 * (l * w);
+                    weight = area * 120; 
+                    totalPlastic += (weight * qty);
+                } else {
+                    // Default to Paper/Box
+                    let area = 0;
+                    let gsm = 450;
+                    let factor = 1.25;
+
+                    if (name.includes('kraft') || name.includes('mailer') || name.includes('envelope')) {
+                         area = 2 * l * w;
+                         gsm = 250;
+                         factor = 1.10;
+                    } else {
+                        // Standard Box
+                        area = 2 * ((l * w) + (l * h) + (w * h));
+                    }
+                    
+                    weight = area * factor * gsm;
+                    totalPaper += (weight * qty);
+                }
+            });
+
+            return { 
+                paperKg: (totalPaper / 1000).toFixed(2), 
+                plasticKg: (totalPlastic / 1000).toFixed(2) 
+            };
+        }
+
         function renderResults(data) {
             loading.classList.add('hidden');
             results.classList.remove('hidden');
@@ -158,6 +214,33 @@ def build_scanner():
                     <td class="px-6 py-3 text-slate-700">${item.qty || 0}</td>
                 </tr>
             `).join('');
+
+            // Calculate & Display Liability
+            const liability = calculateLiability(data);
+            const liabilityHtml = `
+                <div class="mt-6 bg-amber-50 rounded-xl p-6 border border-amber-200">
+                    <h3 class="text-amber-800 text-sm font-bold uppercase tracking-wider mb-4">Total Liability Report (Est.)</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-amber-600 text-xs mb-1">Total Paper</p>
+                            <p class="text-2xl font-bold text-amber-900">${liability.paperKg} kg</p>
+                        </div>
+                        <div>
+                            <p class="text-amber-600 text-xs mb-1">Total Plastic</p>
+                            <p class="text-2xl font-bold text-amber-900">${liability.plasticKg} kg</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-amber-700 mt-2 italic">Based on standard GSM weights. Verify with actual samples.</p>
+                </div>
+            `;
+            
+            const existingReport = document.getElementById('liabilityReport');
+            if (existingReport) existingReport.remove();
+            
+            const reportDiv = document.createElement('div');
+            reportDiv.id = 'liabilityReport';
+            reportDiv.innerHTML = liabilityHtml;
+            results.appendChild(reportDiv);
         }
 
         // Opt-In Logic
